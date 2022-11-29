@@ -126,7 +126,7 @@ class WeatherScreenViewModel {
             switch result {
             case let .success(forecastWeatherResponse):
                 if let response = forecastWeatherResponse {
-                    let indexSet: IndexSet = [7, 15, 23, 31, 39]
+                    let indexSet: IndexSet = self.createIndexSet(numberOfItems: response.list.count)
                     self.forecastWeather = indexSet.map { response.list[$0] }
                 }
             case let .failure(error):
@@ -134,6 +134,19 @@ class WeatherScreenViewModel {
             }
             self.dispatchGroup.leave()
         }
+    }
+    
+    private func createIndexSet(numberOfItems: Int) -> IndexSet {
+        let step = (numberOfItems) / 5
+        var value = step
+        var array = [Int]()
+        
+        for _ in 0..<5 {
+            array.append(value-1)
+            value = value + step
+        }
+        
+        return IndexSet(array)
     }
     
 }
