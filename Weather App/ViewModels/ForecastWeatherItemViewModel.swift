@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct ForecastWeatherItemViewModel {
     
@@ -63,14 +62,14 @@ enum CurrentCondition: String {
         }
     }
     
-    var backgroundColor: UIColor {
+    var backgroundColorHexValue: Int {
         switch self {
         case .clear:
-            return UIColor(rgb: 0x47AB2F)
+            return 0x47AB2F
         case .rainy:
-            return UIColor(rgb: 0x57575D)
+            return 0x57575D
         case .cloudy:
-            return UIColor(rgb: 0x54717A)
+            return 0x54717A
         }
     }
     

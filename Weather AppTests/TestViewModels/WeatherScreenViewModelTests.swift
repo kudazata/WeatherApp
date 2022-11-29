@@ -7,19 +7,20 @@
 
 import XCTest
 @testable import Weather_App
-import CoreLocation
 
 class WeatherScreenViewModelTests: XCTestCase {
 
     private var viewModel: WeatherScreenViewModel!
     private var webServiceMock: WebServiceProtocol!
-    private var location: CLLocationCoordinate2D!
+    private var latitude: Double!
+    private var longitude: Double!
     
     override func setUpWithError() throws {
         viewModel = WeatherScreenViewModel()
         webServiceMock = WebServiceMock()
         viewModel.webService = webServiceMock
-        location = CLLocationCoordinate2D(latitude: -17.7730237, longitude: 30.9954091)
+        latitude = -17.7730237
+        longitude = 30.9954091
     }
     
     func testCurrentTemperatureStringWhenNoDataHasBeenFetched_ShouldReturnDashes() {
@@ -42,8 +43,8 @@ class WeatherScreenViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.backgroundImageName(), "forest_sunny")
     }
     
-    func testBackgroundColorWhenNoDataHasBeenFetched_ShouldReturnUIColor() {
-        XCTAssertEqual(viewModel.backgroundColor(), UIColor(rgb: 0x47AB2F))
+    func testBackgroundColorWhenNoDataHasBeenFetched_ShouldReturnHexValue() {
+        XCTAssertEqual(viewModel.backgroundColorHexValue(), 0x47AB2F)
     }
     
 
@@ -56,42 +57,42 @@ class WeatherScreenViewModelTests: XCTestCase {
     }
     
     func testCurrentTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.currentTemperature, "26°")
     }
     
     func testMaximumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.maximumTemperature, "27°")
     }
     
     func testMinimumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.minimumTemperature, "23°")
     }
     
     func testCurrentConditionWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.currentCondition(), "Cloudy")
     }
     
     func testBackgroundImageNameWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.backgroundImageName(), "forest_cloudy")
     }
     
-    func testBackgroundColorWhenDataHasBeenFetched_ShouldReturnCorrectUIColor() {
-        viewModel.getWeatherInfo(location: location)
-        XCTAssertEqual(viewModel.backgroundColor(), UIColor(rgb: 0x54717A))
+    func testBackgroundColorWhenDataHasBeenFetched_ShouldReturnCorrectHexValue() {
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(viewModel.backgroundColorHexValue(), 0x54717A)
     }
     
     func testNumberOfRowsInSectionWhenDataHasBeenFetched_ShouldReturnFive() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         XCTAssertEqual(viewModel.numberOfRowsInSection(0), 5)
     }
     
     func testForecastWeatherAtIndex_ShouldReturnForecastWeatherItemViewModel() {
-        viewModel.getWeatherInfo(location: location)
+        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
         let weather = Weather(id: 1, main: "Clouds", description: "", icon: "")
         let main = Main(temp: 25.7, tempMin: 23.2, tempMax: 26.9)
         let date = Date()
@@ -106,7 +107,8 @@ class WeatherScreenViewModelTests: XCTestCase {
     override func tearDownWithError() throws {
         viewModel = nil
         webServiceMock = nil
-        location = nil
+        latitude = nil
+        longitude = nil
     }
 
 }

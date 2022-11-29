@@ -43,7 +43,7 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
         smallCurrentTemperatureLabel.text = viewModel.currentTemperature
         maximumTemperatureLabel.text = viewModel.maximumTemperature
         backgroundImage.image = UIImage(named: viewModel.backgroundImageName())
-        self.view.backgroundColor = viewModel.backgroundColor()
+        self.view.backgroundColor = UIColor(rgb: viewModel.backgroundColorHexValue())
         tableView.reloadData()
     }
     
@@ -64,7 +64,7 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
 
         showRetryAlert(title: "Network error", message: errorMessage, vc: self) { [weak self] in
             if let self = self {
-                self.viewModel.getWeatherInfo(location: self.location)
+                self.viewModel.getWeatherInfo(latitude: self.location.latitude, longitude: self.location.longitude)
             }
         }
     }
@@ -94,7 +94,7 @@ extension WeatherScreenViewController: CLLocationManagerDelegate {
         if !didFetchLocation {
             self.didFetchLocation = true
             self.location = locations[0].coordinate
-            viewModel.getWeatherInfo(location: self.location)
+            viewModel.getWeatherInfo(latitude: location.latitude, longitude: location.longitude)
         }
     }
 }

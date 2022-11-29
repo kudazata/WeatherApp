@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import CoreLocation
-import UIKit
 
 protocol WeatherDelegate {
     func didFetchWeatherInfo()
@@ -69,12 +67,12 @@ class WeatherScreenViewModel {
         }
     }
     
-    func backgroundColor() -> UIColor {
+    func backgroundColorHexValue() -> Int {
         if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather[0].main) {
-            return condition.backgroundColor
+            return condition.backgroundColorHexValue
         }
         else {
-            return UIColor(rgb: 0x47AB2F)
+            return 0x47AB2F
         }
     }
     
@@ -95,10 +93,10 @@ class WeatherScreenViewModel {
     
     
     //MARK: - Network functions
-    func getWeatherInfo(location: CLLocationCoordinate2D) {
+    func getWeatherInfo(latitude: Double, longitude: Double) {
         
-        getCurrentWeather(location: location)
-        getForecastWeather(location: location)
+        getCurrentWeather(latitude: latitude, longitude: longitude)
+        getForecastWeather(latitude: latitude, longitude: latitude)
         
         self.dispatchGroup.notify(queue: .main) {
             if self.currentWeather != nil, self.forecastWeather.count > 0 {
@@ -107,9 +105,9 @@ class WeatherScreenViewModel {
         }
     }
     
-    private func getCurrentWeather(location: CLLocationCoordinate2D) {
+    private func getCurrentWeather(latitude: Double, longitude: Double) {
         self.dispatchGroup.enter()
-        webService?.getCurrentWeather(location: location) { result in
+        webService?.getCurrentWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
             case let .success(currentWeatherResponse):
                 self.currentWeather = currentWeatherResponse
@@ -120,9 +118,9 @@ class WeatherScreenViewModel {
         }
     }
     
-    private func getForecastWeather(location: CLLocationCoordinate2D) {
+    private func getForecastWeather(latitude: Double, longitude: Double) {
         self.dispatchGroup.enter()
-        webService?.getForecastWeather(location: location) { result in
+        webService?.getForecastWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
             case let .success(forecastWeatherResponse):
                 if let response = forecastWeatherResponse {

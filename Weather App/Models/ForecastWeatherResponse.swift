@@ -8,11 +8,7 @@
 import Foundation
 
 struct ForecastWeatherResponse: Decodable {
-    var list: [ForecastWeatherItem]
+    let list: [ForecastWeatherItem]
 }
 
-struct ForecastWeatherItem: Decodable {
-    var main: Main
-    var weather: [Weather]
-    var dtTxt: Date
-}
+
