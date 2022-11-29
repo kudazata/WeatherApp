@@ -34,6 +34,7 @@ struct Resource<T> {
 ///This is a protocol that the WebService will conform to so as to allow us to mock it for testing purposes
 protocol WebServiceProtocol {
     func getCurrentWeather(location: CLLocationCoordinate2D, completion: @escaping (Result<CurrentWeatherResponse?, NetworkError>) -> Void)
+    func getForecastWeather(location: CLLocationCoordinate2D, completion: @escaping (Result<ForecastWeatherResponse?, NetworkError>) -> Void)
 }
 
 
@@ -98,6 +99,10 @@ final class WebService: WebServiceProtocol {
         }
     }
     
+    /// Fetch the forecasr weather for a given location
+    /// - Parameters:
+    ///   - location: A CLLocation object containing the current location of the device
+    ///   - completion: Callback with either the forecast weather resource or a Network Error
     func getForecastWeather(location: CLLocationCoordinate2D, completion: @escaping (Result<ForecastWeatherResponse?, NetworkError>) -> Void) {
         
         let url = Urls.forecastWeather(location: location)
