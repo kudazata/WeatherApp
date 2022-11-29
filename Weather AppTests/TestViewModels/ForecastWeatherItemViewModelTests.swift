@@ -10,7 +10,7 @@ import XCTest
 
 class ForecastWeatherItemViewModelTests: XCTestCase {
     
-    private var viewModel: ForecastWeatherItemViewModel!
+    private var sut: ForecastWeatherItemViewModel!
     private var forecastWeatherItem: ForecastWeatherItem!
 
     override func setUpWithError() throws {
@@ -18,23 +18,23 @@ class ForecastWeatherItemViewModelTests: XCTestCase {
         let main = Main(temp: 25.7, tempMin: 23.2, tempMax: 26.9)
         let date = Date(timeIntervalSince1970: 1669721064)
         forecastWeatherItem = ForecastWeatherItem(main: main, weather: [weather], dtTxt: date)
-        viewModel = ForecastWeatherItemViewModel(forecastWeatherItem)
+        sut = ForecastWeatherItemViewModel(forecastWeatherItem)
     }
     
     func testDay_ShouldReturnCorrectDay() {
-        XCTAssertEqual(viewModel.day, "Tuesday")
+        XCTAssertEqual(sut.day, "Tuesday")
     }
     
     func testTemperature_ShouldReturnCorrectString() {
-        XCTAssertEqual(viewModel.temperature, "26°")
+        XCTAssertEqual(sut.temperature, "26°")
     }
     
     func testConditionImageName_ShouldReturnCorrectName() {
-        XCTAssertEqual(viewModel.conditionImageName(), "partlysunny")
+        XCTAssertEqual(sut.conditionImageName(), "partlysunny")
     }
 
     override func tearDownWithError() throws {
-        viewModel = nil
+        sut = nil
         forecastWeatherItem = nil
     }
 

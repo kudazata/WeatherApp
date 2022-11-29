@@ -18,6 +18,7 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
     @IBOutlet weak var maximumTemperatureLabel: UILabel!
     
     @IBOutlet weak var backgroundImage: UIImageView!
+    @IBOutlet weak var cityNameLabel: UILabel!
     let locationManager = CLLocationManager()
     
     let viewModel = WeatherScreenViewModel()
@@ -37,6 +38,7 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
     }
     
     private func displayInfo() {
+        cityNameLabel.text = viewModel.cityName
         largeCurrentTemperatureLabel.text = viewModel.currentTemperature
         currentConditionLabel.text = viewModel.currentCondition()
         minimumTemperatureLabel.text = viewModel.minimumTemperature
@@ -45,6 +47,16 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
         backgroundImage.image = UIImage(named: viewModel.backgroundImageName())
         self.view.backgroundColor = UIColor(rgb: viewModel.backgroundColorHexValue())
         tableView.reloadData()
+    }
+    
+    @IBAction func citiesButtonPressed(_ sender: Any) {
+        let citiesVC = UIStoryboard(name: "Cities", bundle: nil).instantiateViewController(withIdentifier: "citiesVC") as! CitiesViewController
+        let navController = UINavigationController(rootViewController: citiesVC)
+        navController.modalPresentationStyle = .fullScreen
+        navController.navigationBar.prefersLargeTitles = true
+        citiesVC.navigationItem.title = "My cities"
+        navController.navigationBar.backgroundColor = .clear
+        self.present(navController, animated: true)
     }
     
     func didFetchWeatherInfo() {

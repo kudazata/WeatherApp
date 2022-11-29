@@ -10,102 +10,102 @@ import XCTest
 
 class WeatherScreenViewModelTests: XCTestCase {
 
-    private var viewModel: WeatherScreenViewModel!
+    private var sut: WeatherScreenViewModel!
     private var webServiceMock: WebServiceProtocol!
     private var latitude: Double!
     private var longitude: Double!
     
     override func setUpWithError() throws {
-        viewModel = WeatherScreenViewModel()
+        sut = WeatherScreenViewModel()
         webServiceMock = WebServiceMock()
-        viewModel.webService = webServiceMock
+        sut.webService = webServiceMock
         latitude = -17.7730237
         longitude = 30.9954091
     }
     
     func testCurrentTemperatureStringWhenNoDataHasBeenFetched_ShouldReturnDashes() {
-        XCTAssertEqual(viewModel.currentTemperature, "--")
+        XCTAssertEqual(sut.currentTemperature, "--")
     }
     
     func testMaximumTemperatureStringWhenNoDataHasBeenFetched_ShouldReturnDashes() {
-        XCTAssertEqual(viewModel.maximumTemperature, "--")
+        XCTAssertEqual(sut.maximumTemperature, "--")
     }
     
     func testMinimumTemperatureStringWhenNoDataHasBeenFetched_ShouldReturnDashes() {
-        XCTAssertEqual(viewModel.minimumTemperature, "--")
+        XCTAssertEqual(sut.minimumTemperature, "--")
     }
     
     func testCurrentConditionStringWhenNoDataHasBeenFetched_ShouldReturnDashes() {
-        XCTAssertEqual(viewModel.currentCondition(), "--")
+        XCTAssertEqual(sut.currentCondition(), "--")
     }
     
     func testBackgroundImageNameWhenNoDataHasBeenFetched_ShouldReturnForestSunny() {
-        XCTAssertEqual(viewModel.backgroundImageName(), "forest_sunny")
+        XCTAssertEqual(sut.backgroundImageName(), "forest_sunny")
     }
     
     func testBackgroundColorWhenNoDataHasBeenFetched_ShouldReturnHexValue() {
-        XCTAssertEqual(viewModel.backgroundColorHexValue(), 0x47AB2F)
+        XCTAssertEqual(sut.backgroundColorHexValue(), 0x47AB2F)
     }
     
 
     func testNumberOfSections_ShouldReturnOne() {
-        XCTAssertEqual(viewModel.numberOfSections, 1)
+        XCTAssertEqual(sut.numberOfSections, 1)
     }
     
     func testNumberOfRowsInSectionWhenNoDataHasBeenFetched_ShouldReturnZero() {
-        XCTAssertEqual(viewModel.numberOfRowsInSection(0), 0)
+        XCTAssertEqual(sut.numberOfRowsInSection(0), 0)
     }
     
     func testCurrentTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.currentTemperature, "26°")
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.currentTemperature, "26°")
     }
     
     func testMaximumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.maximumTemperature, "27°")
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.maximumTemperature, "27°")
     }
     
     func testMinimumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.minimumTemperature, "23°")
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.minimumTemperature, "23°")
     }
     
     func testCurrentConditionWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.currentCondition(), "Cloudy")
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.currentCondition(), "Cloudy")
     }
     
     func testBackgroundImageNameWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.backgroundImageName(), "forest_cloudy")
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.backgroundImageName(), "forest_cloudy")
     }
     
     func testBackgroundColorWhenDataHasBeenFetched_ShouldReturnCorrectHexValue() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.backgroundColorHexValue(), 0x54717A)
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.backgroundColorHexValue(), 0x54717A)
     }
     
     func testNumberOfRowsInSectionWhenDataHasBeenFetched_ShouldReturnFive() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
-        XCTAssertEqual(viewModel.numberOfRowsInSection(0), 5)
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.numberOfRowsInSection(0), 5)
     }
     
     func testForecastWeatherAtIndex_ShouldReturnForecastWeatherItemViewModel() {
-        viewModel.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
         let weather = Weather(id: 1, main: "Clouds", description: "", icon: "")
         let main = Main(temp: 25.7, tempMin: 23.2, tempMax: 26.9)
         let date = Date()
         let forecastWeatherItem = ForecastWeatherItem(main: main, weather: [weather], dtTxt: date)
         let forecastWeatherItemViewModel = ForecastWeatherItemViewModel(forecastWeatherItem)
         
-        XCTAssertEqual(viewModel.forecastWeatherAtIndex(1).day, forecastWeatherItemViewModel.day)
-        XCTAssertEqual(viewModel.forecastWeatherAtIndex(1).temperature, forecastWeatherItemViewModel.temperature)
-        XCTAssertEqual(viewModel.forecastWeatherAtIndex(1).conditionImageName(), forecastWeatherItemViewModel.conditionImageName())
+        XCTAssertEqual(sut.forecastWeatherAtIndex(1).day, forecastWeatherItemViewModel.day)
+        XCTAssertEqual(sut.forecastWeatherAtIndex(1).temperature, forecastWeatherItemViewModel.temperature)
+        XCTAssertEqual(sut.forecastWeatherAtIndex(1).conditionImageName(), forecastWeatherItemViewModel.conditionImageName())
     }
 
     override func tearDownWithError() throws {
-        viewModel = nil
+        sut = nil
         webServiceMock = nil
         latitude = nil
         longitude = nil

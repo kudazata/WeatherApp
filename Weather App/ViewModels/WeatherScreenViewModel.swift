@@ -22,6 +22,15 @@ class WeatherScreenViewModel {
     /// Dispatch group for the multiple network calls for fetching properties in House object
     private var dispatchGroup = DispatchGroup()
     
+    var cityName: String {
+        if let currentWeather = currentWeather {
+            return currentWeather.name
+        }
+        else {
+            return "--"
+        }
+    }
+    
     var currentTemperature: String {
         if let currentWeather = currentWeather {
             return currentWeather.main.temp.toStringWithZeroDecimalPlaces() + "°"
