@@ -94,7 +94,8 @@ class WeatherScreenViewModelTests: XCTestCase {
         viewModel.getWeatherInfo(location: location)
         let weather = Weather(id: 1, main: "Clouds", description: "", icon: "")
         let main = Main(temp: 25.7, tempMin: 23.2, tempMax: 26.9)
-        let forecastWeatherItem = ForecastWeatherItem(main: main, weather: weather)
+        let date = Date()
+        let forecastWeatherItem = ForecastWeatherItem(main: main, weather: [weather], dtTxt: date)
         let forecastWeatherItemViewModel = ForecastWeatherItemViewModel(forecastWeatherItem)
         
         XCTAssertEqual(viewModel.forecastWeatherAtIndex(1).day, forecastWeatherItemViewModel.day)
