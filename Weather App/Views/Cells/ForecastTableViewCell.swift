@@ -9,8 +9,14 @@ import UIKit
 
 class ForecastTableViewCell: UITableViewCell {
     
-    func configureCell() {
-        
+    @IBOutlet weak var dayLabel: UILabel!
+    @IBOutlet weak var conditionImage: UIImageView!
+    @IBOutlet weak var temperatureLabel: UILabel!
+    
+    func configureCell(viewModel: ForecastWeatherItemViewModel) {
+        dayLabel.text = viewModel.day
+        conditionImage.image = UIImage(named: viewModel.conditionImageName())
+        temperatureLabel.text = viewModel.temperature
     }
 
 }

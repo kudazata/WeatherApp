@@ -85,8 +85,15 @@ final class WebService: WebServiceProtocol {
         let resource = Resource<CurrentWeatherResponse>(urlString: url) { data in
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let weatherResponse = try? decoder.decode(CurrentWeatherResponse.self, from: data)
-            return weatherResponse
+            do {
+                let weatherResponse = try decoder.decode(CurrentWeatherResponse.self, from: data)
+                return weatherResponse
+            }
+            catch {
+                print(error)
+            }
+           
+            return nil
         }
         
         load(resource: resource) { result in
@@ -109,6 +116,7 @@ final class WebService: WebServiceProtocol {
         let resource = Resource<ForecastWeatherResponse>(urlString: url) { data in
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
+            decoder.setDateDecodingStrategy()
             let forecastWeatherResponse = try? decoder.decode(ForecastWeatherResponse.self, from: data)
             return forecastWeatherResponse
         }

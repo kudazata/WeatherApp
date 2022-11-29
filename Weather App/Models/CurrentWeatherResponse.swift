@@ -10,7 +10,7 @@ import Foundation
 struct CurrentWeatherResponse: Decodable {
     
     var name: String
-    var weather: Weather
+    var weather: [Weather]
     var main: Main
 }
 

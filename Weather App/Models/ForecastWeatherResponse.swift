@@ -13,5 +13,6 @@ struct ForecastWeatherResponse: Decodable {
 
 struct ForecastWeatherItem: Decodable {
     var main: Main
-    var weather: Weather
+    var weather: [Weather]
+    var dtTxt: Date
 }

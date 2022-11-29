@@ -52,7 +52,7 @@ class WeatherScreenViewModel {
     }
         
     func currentCondition() -> String {
-        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather.main) {
+        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather[0].main) {
             return condition.displayName
         }
         else {
@@ -61,7 +61,7 @@ class WeatherScreenViewModel {
     }
     
     func backgroundImageName() -> String {
-        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather.main) {
+        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather[0].main) {
             return condition.backgroundImageName
         }
         else {
@@ -70,7 +70,7 @@ class WeatherScreenViewModel {
     }
     
     func backgroundColor() -> UIColor {
-        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather.main) {
+        if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather[0].main) {
             return condition.backgroundColor
         }
         else {
@@ -126,7 +126,8 @@ class WeatherScreenViewModel {
             switch result {
             case let .success(forecastWeatherResponse):
                 if let response = forecastWeatherResponse {
-                    self.forecastWeather = response.list
+                    let indexSet: IndexSet = [7, 15, 23, 31, 39]
+                    self.forecastWeather = indexSet.map { response.list[$0] }
                 }
             case let .failure(error):
                 self.delegate?.errorFetchingWeatherInfo(error: error)
@@ -146,7 +147,7 @@ struct ForecastWeatherItemViewModel {
     private var forecastWeatherItem: ForecastWeatherItem
     
     var day: String {
-        return "Monday"
+        return forecastWeatherItem.dtTxt.dayOfWeek()!
     }
     
     var temperature: String {
@@ -154,7 +155,7 @@ struct ForecastWeatherItemViewModel {
     }
     
     func conditionImageName() -> String {
-        if let condition = CurrentCondition(rawValue: forecastWeatherItem.weather.main) {
+        if let condition = CurrentCondition(rawValue: forecastWeatherItem.weather[0].main) {
             return condition.imageName
         }
         else {
