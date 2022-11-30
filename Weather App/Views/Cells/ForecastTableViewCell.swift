@@ -18,5 +18,4 @@ class ForecastTableViewCell: UITableViewCell {
         conditionImage.image = UIImage(named: viewModel.conditionImageName())
         temperatureLabel.text = viewModel.temperature
     }
-
 }

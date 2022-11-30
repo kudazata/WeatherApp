@@ -57,42 +57,42 @@ class WeatherScreenViewModelTests: XCTestCase {
     }
     
     func testCurrentTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.currentTemperature, "26°")
     }
     
     func testMaximumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.maximumTemperature, "27°")
     }
     
     func testMinimumTemperatureWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.minimumTemperature, "23°")
     }
     
     func testCurrentConditionWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.currentCondition(), "Cloudy")
     }
     
     func testBackgroundImageNameWhenDataHasBeenFetched_ShouldReturnCorrectString() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.backgroundImageName(), "forest_cloudy")
     }
     
     func testBackgroundColorWhenDataHasBeenFetched_ShouldReturnCorrectHexValue() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.backgroundColorHexValue(), 0x54717A)
     }
     
     func testNumberOfRowsInSectionWhenDataHasBeenFetched_ShouldReturnFive() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         XCTAssertEqual(sut.numberOfRowsInSection(0), 5)
     }
     
     func testForecastWeatherAtIndex_ShouldReturnForecastWeatherItemViewModel() {
-        sut.getWeatherInfo(latitude: latitude, longitude: longitude)
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
         let weather = Weather(id: 1, main: "Clouds", description: "", icon: "")
         let main = Main(temp: 25.7, tempMin: 23.2, tempMax: 26.9)
         let date = Date()
@@ -102,6 +102,13 @@ class WeatherScreenViewModelTests: XCTestCase {
         XCTAssertEqual(sut.forecastWeatherAtIndex(1).day, forecastWeatherItemViewModel.day)
         XCTAssertEqual(sut.forecastWeatherAtIndex(1).temperature, forecastWeatherItemViewModel.temperature)
         XCTAssertEqual(sut.forecastWeatherAtIndex(1).conditionImageName(), forecastWeatherItemViewModel.conditionImageName())
+    }
+    
+    func testClearCurrentData_ShouldClearWeatherData() {
+        sut.getWeatherInfoByCoordinates(latitude: latitude, longitude: longitude)
+        XCTAssertEqual(sut.currentTemperature, "26°")
+        sut.clearCurrentData()
+        XCTAssertEqual(sut.currentTemperature, "--")
     }
 
     override func tearDownWithError() throws {

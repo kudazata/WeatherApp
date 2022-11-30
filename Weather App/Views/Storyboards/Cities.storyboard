@@ -27,20 +27,31 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Harare" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WGA-59-XCs">
-                                                    <rect key="frame" x="30" y="30" width="62.5" height="24"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                                    <rect key="frame" x="30" y="31.5" width="57" height="21.5"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="location.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="EXV-qU-P1Z">
+                                                    <rect key="frame" x="97" y="33" width="20" height="18.5"/>
+                                                    <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="LAY-Qf-wxK"/>
+                                                        <constraint firstAttribute="width" constant="20" id="ebP-J4-YI0"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="WGA-59-XCs" firstAttribute="centerY" secondItem="qSs-0M-1Gu" secondAttribute="centerY" id="AaM-zq-Wun"/>
                                                 <constraint firstItem="WGA-59-XCs" firstAttribute="leading" secondItem="qSs-0M-1Gu" secondAttribute="leadingMargin" constant="10" id="WjS-xC-LNy"/>
+                                                <constraint firstItem="EXV-qU-P1Z" firstAttribute="centerY" secondItem="qSs-0M-1Gu" secondAttribute="centerY" id="aBh-eb-Qry"/>
+                                                <constraint firstItem="EXV-qU-P1Z" firstAttribute="leading" secondItem="WGA-59-XCs" secondAttribute="trailing" constant="10" id="hhK-k7-iyD"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
                                             <outlet property="cityNameLabel" destination="WGA-59-XCs" id="89r-Je-CO3"/>
+                                            <outlet property="currentLocationImage" destination="EXV-qU-P1Z" id="kBk-4W-hmI"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -68,4 +79,7 @@
             <point key="canvasLocation" x="-7.2463768115942031" y="57.589285714285708"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="location.fill" catalog="system" width="128" height="121"/>
+    </resources>
 </document>

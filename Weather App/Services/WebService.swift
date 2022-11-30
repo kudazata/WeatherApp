@@ -7,36 +7,6 @@
 
 import Foundation
 
-/// The different error types that might occur when making network calls
-enum NetworkError: Error {
-    case badUrl
-    case decodingError
-    case badRequest
-    case noData
-    case customError(Error)
-}
-
-extension NetworkError: LocalizedError {
-    
-    public var errorDescription: String? {
-        return "There was an error connecting to our server. Please try again"
-    }
-}
-
-/// A resource object to be created when making network calls
-struct Resource<T> {
-    let urlString: String
-    let parse: (Data) -> T?
-}
-
-
-///This is a protocol that the WebService will conform to so as to allow us to mock it for testing purposes
-protocol WebServiceProtocol {
-    func getCurrentWeather(latitude: Double, longitude: Double, completion: @escaping (Result<CurrentWeatherResponse?, NetworkError>) -> Void)
-    func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping (Result<ForecastWeatherResponse?, NetworkError>) -> Void)
-}
-
-
 /// The class responsible for all network calls within the app
 final class WebService: WebServiceProtocol {
     
@@ -74,15 +44,28 @@ final class WebService: WebServiceProtocol {
             
         }.resume()
     }
-
     
-    /// Fetch the current weather for a given location
+    
+    /// Fetch the current weather for a given location or city name
     /// - Parameters:
     ///   - location: A CLLocation object containing the current location of the device
     ///   - completion: Callback with either the current weather resource or a Network Error
-    func getCurrentWeather(latitude: Double, longitude: Double, completion: @escaping (Result<CurrentWeatherResponse?, NetworkError>) -> Void) {
+    func getCurrentWeather(latitude: Double?, longitude: Double?, cityName: String?, completion: @escaping (Result<CurrentWeatherResponse?, NetworkError>) -> Void) {
         
-        let url = Urls.currentWeatherUrl(latitude: latitude, longitude: longitude)
+        var url = ""
+        
+        if let latitude = latitude, let longitude = longitude {
+            url = Urls.currentWeatherByCoordinates(latitude: latitude, longitude: longitude)
+        }
+        else if let cityName = cityName {
+            url = Urls.currentWeatherByCity(cityName: cityName)
+        }
+        
+        if url == "" {
+            completion(.failure(.badUrl))
+            return
+        }
+        
         let resource = Resource<CurrentWeatherResponse>(urlString: url) { data in
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -100,13 +83,26 @@ final class WebService: WebServiceProtocol {
         }
     }
     
-    /// Fetch the forecasr weather for a given location
+    /// Fetch the forecast weather for a given location or city name
     /// - Parameters:
     ///   - location: A CLLocation object containing the current location of the device
     ///   - completion: Callback with either the forecast weather resource or a Network Error
-    func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping (Result<ForecastWeatherResponse?, NetworkError>) -> Void) {
+    func getForecastWeather(latitude: Double?, longitude: Double?, cityName: String?, completion: @escaping (Result<ForecastWeatherResponse?, NetworkError>) -> Void) {
         
-        let url = Urls.forecastWeather(latitude: latitude, longitude: longitude)
+        var url = ""
+        
+        if let latitude = latitude, let longitude = longitude {
+            url = Urls.forecastWeatherByCoordinates(latitude: latitude, longitude: longitude)
+        }
+        else if let cityName = cityName {
+            url = Urls.forecastWeatherByCity(cityName: cityName)
+        }
+        
+        if url == "" {
+            completion(.failure(.badUrl))
+            return
+        }
+        
         let resource = Resource<ForecastWeatherResponse>(urlString: url) { data in
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase

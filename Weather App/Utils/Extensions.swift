@@ -50,3 +50,10 @@ extension Date {
         return dateFormatter.string(from: self).capitalized
     }
 }
+
+extension String {
+    
+    func escaped() -> String {
+        return self.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? self
+    }
+}

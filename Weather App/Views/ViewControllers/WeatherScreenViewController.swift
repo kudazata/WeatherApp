@@ -16,25 +16,22 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
     @IBOutlet weak var minimumTemperatureLabel: UILabel!
     @IBOutlet weak var smallCurrentTemperatureLabel: UILabel!
     @IBOutlet weak var maximumTemperatureLabel: UILabel!
-    
     @IBOutlet weak var backgroundImage: UIImageView!
     @IBOutlet weak var cityNameLabel: UILabel!
     let locationManager = CLLocationManager()
-    
     let viewModel = WeatherScreenViewModel()
     var location: CLLocationCoordinate2D!
     var didFetchLocation = false
+    var webService: WebServiceProtocol = WebService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         displayInfo()
         viewModel.delegate = self
-        viewModel.webService = WebService()
+        locationManager.delegate = self
+        viewModel.webService = webService
         self.locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
-        location = locationManager.location?.coordinate
-        locationManager.delegate = self
-
     }
     
     private func displayInfo() {
@@ -49,14 +46,21 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
         tableView.reloadData()
     }
     
+    func updateCity(cityName: String) {
+        viewModel.clearCurrentData()
+        self.displayInfo()
+        viewModel.getWeatherInfoByCity(cityName: cityName)
+    }
+    
     @IBAction func citiesButtonPressed(_ sender: Any) {
-        let citiesVC = UIStoryboard(name: "Cities", bundle: nil).instantiateViewController(withIdentifier: "citiesVC") as! CitiesViewController
-        let navController = UINavigationController(rootViewController: citiesVC)
-        navController.modalPresentationStyle = .fullScreen
-        navController.navigationBar.prefersLargeTitles = true
-        citiesVC.navigationItem.title = "My cities"
-        navController.navigationBar.backgroundColor = .clear
-        self.present(navController, animated: true)
+        if let citiesVC = UIStoryboard(name: "Cities", bundle: nil).instantiateViewController(withIdentifier: "citiesVC") as? CitiesViewController {
+            citiesVC.backgroundColorHex = viewModel.backgroundColorHexValue()
+            let navController = UINavigationController(rootViewController: citiesVC)
+            navController.modalPresentationStyle = .fullScreen
+            navController.navigationBar.prefersLargeTitles = true
+            citiesVC.navigationItem.title = "My cities"
+            self.present(navController, animated: true)
+        }
     }
     
     func didFetchWeatherInfo() {
@@ -64,23 +68,13 @@ class WeatherScreenViewController: UIViewController, WeatherDelegate {
     }
     
     func errorFetchingWeatherInfo(error: NetworkError) {
-        var errorMessage = ""
-        
-        switch error {
-            
-        case .customError(let customError):
-            errorMessage = customError.localizedDescription
-        default:
-            errorMessage = error.localizedDescription
-        }
-
-        showRetryAlert(title: "Network error", message: errorMessage, vc: self) { [weak self] in
+        showRetryAlert(title: "Network error", message: error.message, vc: self) { [weak self] in
             if let self = self {
-                self.viewModel.getWeatherInfo(latitude: self.location.latitude, longitude: self.location.longitude)
+                self.viewModel.getWeatherInfoByCoordinates(latitude: self.location.latitude, longitude: self.location.longitude)
             }
         }
     }
-
+    
 }
 
 extension WeatherScreenViewController: UITableViewDelegate, UITableViewDataSource {
@@ -94,9 +88,11 @@ extension WeatherScreenViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "forecastCell") as! ForecastTableViewCell
-        cell.configureCell(viewModel: viewModel.forecastWeatherAtIndex(indexPath.row))
-        return cell
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "forecastCell") as? ForecastTableViewCell {
+            cell.configureCell(viewModel: viewModel.forecastWeatherAtIndex(indexPath.row))
+            return cell
+        }
+        return UITableViewCell()
     }
     
 }
@@ -106,7 +102,7 @@ extension WeatherScreenViewController: CLLocationManagerDelegate {
         if !didFetchLocation {
             self.didFetchLocation = true
             self.location = locations[0].coordinate
-            viewModel.getWeatherInfo(latitude: location.latitude, longitude: location.longitude)
+            viewModel.getWeatherInfoByCoordinates(latitude: location.latitude, longitude: location.longitude)
         }
     }
 }

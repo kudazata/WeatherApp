@@ -19,7 +19,7 @@ class WeatherScreenViewModel {
     private var currentWeather: CurrentWeatherResponse?
     private var forecastWeather = [ForecastWeatherItem]()
     
-    /// Dispatch group for the multiple network calls for fetching properties in House object
+    /// Dispatch group for the multiple network calls for fetching current and forecast weather
     private var dispatchGroup = DispatchGroup()
     
     var cityName: String {
@@ -57,7 +57,7 @@ class WeatherScreenViewModel {
             return "--"
         }
     }
-        
+    
     func currentCondition() -> String {
         if let currentWeather = currentWeather, let condition = CurrentCondition(rawValue: currentWeather.weather[0].main) {
             return condition.displayName
@@ -102,10 +102,23 @@ class WeatherScreenViewModel {
     
     
     //MARK: - Network functions
-    func getWeatherInfo(latitude: Double, longitude: Double) {
+    func getWeatherInfoByCoordinates(latitude: Double, longitude: Double) {
         
-        getCurrentWeather(latitude: latitude, longitude: longitude)
-        getForecastWeather(latitude: latitude, longitude: latitude)
+        getCurrentWeatherByCoordinates(latitude: latitude, longitude: longitude)
+        getForecastWeatherByCoordinates(latitude: latitude, longitude: latitude)
+        
+        self.dispatchGroup.notify(queue: .main) {
+            if self.currentWeather != nil, self.forecastWeather.count > 0 {
+                self.saveCurrentCity(cityName: self.currentWeather?.name ?? "")
+                self.delegate?.didFetchWeatherInfo()
+            }
+        }
+    }
+    
+    func getWeatherInfoByCity(cityName: String) {
+        
+        getCurrentWeatherByCity(cityName: cityName)
+        getForecastWeatherByCity(cityName: cityName)
         
         self.dispatchGroup.notify(queue: .main) {
             if self.currentWeather != nil, self.forecastWeather.count > 0 {
@@ -114,9 +127,9 @@ class WeatherScreenViewModel {
         }
     }
     
-    private func getCurrentWeather(latitude: Double, longitude: Double) {
+    private func getCurrentWeatherByCity(cityName: String) {
         self.dispatchGroup.enter()
-        webService?.getCurrentWeather(latitude: latitude, longitude: longitude) { result in
+        webService?.getCurrentWeather(latitude: nil, longitude: nil, cityName: cityName) { result in
             switch result {
             case let .success(currentWeatherResponse):
                 self.currentWeather = currentWeatherResponse
@@ -127,9 +140,38 @@ class WeatherScreenViewModel {
         }
     }
     
-    private func getForecastWeather(latitude: Double, longitude: Double) {
+    private func getForecastWeatherByCity(cityName: String) {
         self.dispatchGroup.enter()
-        webService?.getForecastWeather(latitude: latitude, longitude: longitude) { result in
+        webService?.getForecastWeather(latitude: nil, longitude: nil, cityName: cityName) { result in
+            switch result {
+            case let .success(forecastWeatherResponse):
+                if let response = forecastWeatherResponse {
+                    let indexSet: IndexSet = self.createIndexSet(numberOfItems: response.list.count)
+                    self.forecastWeather = indexSet.map { response.list[$0] }
+                }
+            case let .failure(error):
+                self.delegate?.errorFetchingWeatherInfo(error: error)
+            }
+            self.dispatchGroup.leave()
+        }
+    }
+    
+    private func getCurrentWeatherByCoordinates(latitude: Double, longitude: Double) {
+        self.dispatchGroup.enter()
+        webService?.getCurrentWeather(latitude: latitude, longitude: longitude, cityName: nil) { result in
+            switch result {
+            case let .success(currentWeatherResponse):
+                self.currentWeather = currentWeatherResponse
+            case let .failure(error):
+                self.delegate?.errorFetchingWeatherInfo(error: error)
+            }
+            self.dispatchGroup.leave()
+        }
+    }
+    
+    private func getForecastWeatherByCoordinates(latitude: Double, longitude: Double) {
+        self.dispatchGroup.enter()
+        webService?.getForecastWeather(latitude: latitude, longitude: longitude, cityName: nil) { result in
             switch result {
             case let .success(forecastWeatherResponse):
                 if let response = forecastWeatherResponse {
@@ -154,6 +196,16 @@ class WeatherScreenViewModel {
         }
         
         return IndexSet(array)
+    }
+    
+    private func saveCurrentCity(cityName: String) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(cityName, forKey: "currentCity")
+    }
+    
+    func clearCurrentData() {
+        currentWeather = nil
+        forecastWeather = [ForecastWeatherItem]()
     }
     
 }
